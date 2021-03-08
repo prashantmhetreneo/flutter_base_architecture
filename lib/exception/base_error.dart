@@ -22,7 +22,7 @@ class BaseError implements Exception {
 
   String toString() => message;
 
-  /*String toString() =>
+/*String toString() =>
       "BaseErrorType [$type]: " +
           (message ?? "") +
           (stackTrace ?? "").toString();*/

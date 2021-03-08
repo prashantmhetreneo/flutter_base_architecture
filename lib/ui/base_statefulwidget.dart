@@ -15,7 +15,8 @@ import 'base_error_widget.dart';
 import 'base_widget.dart';
 
 /// Every StatefulWidget should be inherited from this
-abstract class BaseStatefulWidget<VM extends BaseViewModel> extends StatefulWidget {
+abstract class BaseStatefulWidget<VM extends BaseViewModel>
+    extends StatefulWidget {
   BaseStatefulWidget({Key key}) : super(key: key);
 }
 
@@ -70,7 +71,6 @@ abstract class _BaseState<
     return await _userStore.getLoggedInUserJson();
   }
 
-
   Future<bool> removeLoggedInUser() async {
     return await _userStore.removeUser();
   }
@@ -79,13 +79,13 @@ abstract class _BaseState<
       {Toast toastLength,
       ToastGravity gravity,
       Color backgroundColor,
-      int timeInSecForIos,
+      int timeInSecForIosWeb,
       Color textColor,
       double fontSize}) {
     widget?.toastMessage(message,
         toastLength: toastLength,
         gravity: gravity,
-        timeInSecForIos: timeInSecForIos,
+        timeInSecForIosWeb: timeInSecForIosWeb,
         backgroundColor: backgroundColor,
         textColor: textColor,
         fontSize: fontSize);
@@ -100,7 +100,7 @@ abstract class BaseStatefulScreen<
     VM extends BaseViewModel,
     B extends BaseStatefulWidget<VM>,
     ErrorParser extends BaseErrorParser,
-    User extends BaseDto> extends _BaseState<VM,B, ErrorParser, User> {
+    User extends BaseDto> extends _BaseState<VM, B, ErrorParser, User> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   VM viewModel;
@@ -152,7 +152,7 @@ abstract class BaseStatefulScreen<
                 key: scaffoldKey,
                 appBar: buildAppbar(),
                 body: buildBody(),
-                resizeToAvoidBottomPadding: resizeToAvoidBottomPadding(),
+                // resizeToAvoidBottomPadding: resizeToAvoidBottomPadding(),
                 bottomNavigationBar: buildBottomNavigationBar(),
                 floatingActionButton: floatingActionButton(),
                 floatingActionButtonLocation: floatingActionButtonLocation(),

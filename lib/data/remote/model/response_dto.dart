@@ -24,6 +24,14 @@ class ResponseDto {
     this._code = statusCode;
     this._data = obj["data"];
     this._errors = obj["errors"];
+    // this._data = obj.containsKey("data")
+    //     ? (obj["data"] is List ? obj["data"] : [obj["data"]])
+    //     : [];
+    // this._errors = obj.containsKey("errors")
+    //     ? (obj["errors"] is List
+    //     ? obj["errors"]
+    //     : obj["errors"].isNotEmpty ? [obj["errors"]] : [])
+    //     : [];
   }
 
   Map<String, dynamic> toMap() {

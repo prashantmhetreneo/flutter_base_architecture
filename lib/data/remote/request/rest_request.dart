@@ -6,13 +6,14 @@ abstract class RESTRequest {
   final RESTService _service;
 
   String apiUrl;
-  String _apiKey;
+
+  // String _apiKey;
   String schema;
   String host;
 
   RESTRequest(this._service,
       {this.apiUrl = "", this.schema: "http", this.host: ""}) {
-    this._apiKey = "";
+    //this._apiKey = "";
   }
 
   Future<Response> execute(String endpoint, Map<String, dynamic> params,

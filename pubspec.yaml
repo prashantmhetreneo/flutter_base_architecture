@@ -5,22 +5,31 @@ author: Faiyyaz Shaikh
 homepage: "https://github.com/faiyyazs/"
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  provider: ^4.3.2+2
-  fluttertoast: ^7.1.0
-  shared_preferences: ^0.5.12
-  connectivity: ^0.4.9+3
+  provider: ^5.0.0
+  fluttertoast: ^7.1.8
+  shared_preferences: ^2.0.3
+  connectivity: ^3.0.2
   dio: ^3.0.10
-  cupertino_icons: ^1.0.0
-  flutter_svg: ^0.19.0
-  rxdart: ^0.24.1
+  flutter_svg: ^0.19.3
+  rxdart: ^0.26.0
   dio_http_cache: ^0.2.11
-  steel_crypt: ^1.7.1+1
+ # steel_crypt: ^1.7.1+1
 
+ # provider: ^5.0.0
+#  fluttertoast: ^7.1.8
+#  shared_preferences: ^2.0.3
+#  connectivity: ^3.0.2
+#  dio: ^3.0.0
+#  cupertino_icons: ^1.0.0
+#  flutter_svg: ^0.19.2
+#  rxdart: ^0.24.0
+#  dio_http_cache: ^0.2.11
+#  steel_crypt: ^1.7.1+1
 dev_dependencies:
   flutter_test:
     sdk: flutter

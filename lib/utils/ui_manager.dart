@@ -5,13 +5,14 @@ import 'package:flutter/widgets.dart';
 
 abstract class UIManager {
   Size _currentModel;
-  double _widthScale = 1;
-  double _heightScale = 1;
-  Orientation _orientation;
+
+  // double _widthScale = 1;
+  // double _heightScale = 1;
+  //Orientation _orientation;
 
   UIManager(BuildContext _context) {
     _currentModel = MediaQuery.of(_context).size;
-    _orientation = MediaQuery.of(_context).orientation;
+    //  _orientation = MediaQuery.of(_context).orientation;
   }
 
   double height(BuildContext context, double refVal) {

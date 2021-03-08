@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
 class SizeHelper {
-
-  static Size _phoneScreenSize(context){
+  static Size _phoneScreenSize(context) {
     return MediaQuery.of(context).size;
   }
 
   static Size getDimensions(context) {
-   var size = _phoneScreenSize(context);
+    var size = _phoneScreenSize(context);
     if (MediaQuery.of(context).orientation == Orientation.portrait) {
       return Size(size.width, size.height);
     } else {
@@ -15,19 +14,18 @@ class SizeHelper {
     }
   }
 
-  static double width(width,context){
+  static double width(width, context) {
     var size = getDimensions(context);
     return width * (size.width * size.aspectRatio);
   }
 
-  static double height(height,context){
+  static double height(height, context) {
     var size = getDimensions(context);
     return height * (size.height * size.aspectRatio);
   }
 
-  static double sp(fontSize,context){
+  static double sp(fontSize, context) {
     var size = getDimensions(context);
     return fontSize * (size.width * size.aspectRatio);
   }
-
 }

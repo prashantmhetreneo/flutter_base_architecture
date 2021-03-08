@@ -29,10 +29,3 @@ abstract class UserStore<T extends BaseDto> {
 
   T mapUserDto(decode);
 }
-
-/*class Test extends UserStore<UserDto> {
-  @override
-  UserDto mapUserDto(decode) {
-   return UserDto.map(decode);
-  }
-}*/

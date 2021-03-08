@@ -31,7 +31,8 @@ class ResponsiveBuilder extends StatelessWidget {
   }
 }
 
-DeviceScreenType _getDeviceType(MediaQueryData mediaQuery, ScreenBreakpoints breakpoint) {
+DeviceScreenType _getDeviceType(
+    MediaQueryData mediaQuery, ScreenBreakpoints breakpoint) {
   double deviceWidth = mediaQuery.size.shortestSide;
 
   if (kIsWeb) {
@@ -39,16 +40,16 @@ DeviceScreenType _getDeviceType(MediaQueryData mediaQuery, ScreenBreakpoints bre
   }
 
   // Replaces the defaults with the user defined definitions
-  if(breakpoint != null) {
-    if(deviceWidth > breakpoint.desktop) {
+  if (breakpoint != null) {
+    if (deviceWidth > breakpoint.desktop) {
       return DeviceScreenType.Desktop;
     }
 
-    if(deviceWidth > breakpoint.tablet) {
+    if (deviceWidth > breakpoint.tablet) {
       return DeviceScreenType.Tablet;
     }
 
-    if(deviceWidth < breakpoint.watch) {
+    if (deviceWidth < breakpoint.watch) {
       return DeviceScreenType.Watch;
     }
   }

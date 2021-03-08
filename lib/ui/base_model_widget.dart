@@ -6,27 +6,29 @@ import 'package:flutter_base_architecture/extensions/widget_extensions.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
-abstract class BaseModelWidget<T,ErrorParser extends BaseErrorParser> extends Widget {
-
+// ignore: must_be_immutable
+abstract class BaseModelWidget<T, ErrorParser extends BaseErrorParser>
+    extends Widget {
   ErrorHandler<ErrorParser> _errorHandler;
 
   @protected
   Widget build(BuildContext context, T model);
 
   @override
-  DataProviderElement<T,ErrorParser> createElement() => DataProviderElement<T,ErrorParser>(this);
+  DataProviderElement<T, ErrorParser> createElement() =>
+      DataProviderElement<T, ErrorParser>(this);
 
   void showToastMessage(String message,
       {Toast toastLength,
       ToastGravity gravity,
       Color backgroundColor,
-      int timeInSecForIos,
+      int timeInSecForIosWeb,
       Color textColor,
       double fontSize}) {
     toastMessage(message,
         toastLength: toastLength,
         gravity: gravity,
-        timeInSecForIos: timeInSecForIos,
+        timeInSecForIosWeb: timeInSecForIosWeb,
         backgroundColor: backgroundColor,
         textColor: textColor,
         fontSize: fontSize);
@@ -37,7 +39,8 @@ abstract class BaseModelWidget<T,ErrorParser extends BaseErrorParser> extends Wi
   }
 }
 
-class DataProviderElement<T,ErrorParser extends BaseErrorParser> extends ComponentElement {
+class DataProviderElement<T, ErrorParser extends BaseErrorParser>
+    extends ComponentElement {
   DataProviderElement(BaseModelWidget widget) : super(widget);
 
   @override

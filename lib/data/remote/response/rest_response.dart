@@ -16,16 +16,16 @@ abstract class RESTResponse<T> {
 
   bool get isSuccess => _status;
 
-  List<BaseError> _errors = List<BaseError>();
-  List<T> _data = new List<T>();
+  List<BaseError> _errors = <BaseError>[];
+  List<T> _data = <T>[];
   HashMap<String, dynamic> _dataFields = HashMap<String, dynamic>();
-  int _apiIdenfier = -1;
+  int _apiIdentifier = -1;
 
-  int get apiIdenfier => _apiIdenfier;
+  int get apiIdentifier => _apiIdentifier;
 
-  set apiIdenfier(int value) {
-    _apiIdenfier = value;
-  }
+  // set apiIdentifier(int value) {
+  //   _apiIdentifier = value;
+  // }
 
   final Response response;
 
@@ -33,8 +33,8 @@ abstract class RESTResponse<T> {
     try {
       if (this.response?.data != null) {
         print(this.response.data.toString());
-        _apiIdenfier = response?.extra["apiCallIdentifier"];
-        print("_apiIdenfier" + _apiIdenfier?.toString());
+        _apiIdentifier = response?.extra["apiCallIdentifier"];
+        print("_apiIdenfier" + _apiIdentifier?.toString());
         print("cached: " + response?.extra["cached"]?.toString());
         print("RESTResponse:: Encrypted " + this.response.data.toString());
         parseEncryptedResponse(this.response.data);
@@ -100,7 +100,7 @@ abstract class RESTResponse<T> {
         return;
       }
       print("RESTResponse: " + _responseDto.data.toString());
-      parseResponseData(_responseDto.data, this._apiIdenfier);
+      parseResponseData(_responseDto.data, this._apiIdentifier);
     } catch (error) {
       getErrors().add(error);
       print("RESTResponse:: Error" + error.toString());

@@ -31,7 +31,7 @@ abstract class RESTRequest {
     buffer.writeAll([apiUrl, "/", endpoint]);
 
     Map<String, dynamic> extraParams = Map();
-    extraParams.putIfAbsent(RESTService.data, () {
+    extraParams.putIfAbsent(RESTService.DATA, () {
       return apiCallMethod == RESTService.URI
           ? Uri(scheme: schema, host: host, path: endpoint)
           : buffer.toString();

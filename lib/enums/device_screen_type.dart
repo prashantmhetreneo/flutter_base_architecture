@@ -1,1 +1,1 @@
-enum DeviceScreenType { Mobile, Tablet, Desktop, Watch }
+enum DeviceScreenType { Mobile, Tablet, Desktop, Watch, Web }

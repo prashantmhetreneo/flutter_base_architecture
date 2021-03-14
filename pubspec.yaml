@@ -1,8 +1,8 @@
 name: flutter_base_architecture
 description: A base framework to start with flutter
-version: 1.0.1
-author: Faiyyaz Shaikh
-homepage: "https://github.com/faiyyazs/"
+version: 2.0.0
+author: Prashant Mhetre
+homepage: "https://github.com/prashantmhetreneo/"
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -11,25 +11,16 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^5.0.0
-  fluttertoast: ^7.1.8
-  shared_preferences: ^2.0.3
-  connectivity: ^3.0.2
   dio: ^3.0.10
-  flutter_svg: ^0.19.3
-  rxdart: ^0.26.0
   dio_http_cache: ^0.2.11
- # steel_crypt: ^1.7.1+1
+  dio_cache_interceptor: ^1.0.0
+  rxdart: ^0.26.0
+  connectivity: ^3.0.2
+  shared_preferences: ^2.0.4
+  fluttertoast: ^7.1.8
+  flutter_svg: ^0.19.3
 
- # provider: ^5.0.0
-#  fluttertoast: ^7.1.8
-#  shared_preferences: ^2.0.3
-#  connectivity: ^3.0.2
-#  dio: ^3.0.0
-#  cupertino_icons: ^1.0.0
-#  flutter_svg: ^0.19.2
-#  rxdart: ^0.24.0
-#  dio_http_cache: ^0.2.11
-#  steel_crypt: ^1.7.1+1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_base_architecture/exception/base_error.dart';
 
 class RESTService {
@@ -9,22 +10,23 @@ class RESTService {
   static const int POST = 2;
   static const int PUT = 3;
   static const int DELETE = 4;
-  static const int FORMDATA = 5;
+  static const int FORM_DATA = 5;
   static const int URI = 6;
   static const int PATCH = 7;
   static const int PATCH_URI = 8;
   static const int PATCH_FORM_DATA = 9;
   static const int POST_QUERY = 10;
   static const int DELETE_URI = 11;
-  static const String data = "data";
-  static const String API_URL = "APIURL";
+  static const String DATA = "DATA";
+  static const String API_URL = "API_URL";
   static const String EXTRA_FORCE_REFRESH = "EXTRA_FORCE_REFRESH";
   static const String EXTRA_HTTP_VERB = "EXTRA_HTTP_VERB";
   static const String REST_API_CALL_IDENTIFIER = "REST_API_CALL_IDENTIFIER";
   static const String EXTRA_PARAMS = "EXTRA_PARAMS";
+  DioCacheManager _dioCacheManager;
 
   Future<Response> onHandleIntent(Map<String, dynamic> params) async {
-    dynamic action = params.putIfAbsent(data, () {});
+    dynamic action = params.putIfAbsent(DATA, () {});
 
     int verb = params.putIfAbsent(EXTRA_HTTP_VERB, () {
       return GET;
@@ -48,27 +50,10 @@ class RESTService {
 
     try {
       Dio request = Dio();
+      _dioCacheManager ??= DioCacheManager(CacheConfig(baseUrl: apiUrl));
       request.interceptors
-        ..add(DioCacheManager(CacheConfig(baseUrl: apiUrl)).interceptor)
-        ..add(InterceptorsWrapper(onRequest: (Options options) async {
-          //Set the token to headers
-
-          options.headers["apiCallIdentifier"] = apiCallIdentifier;
-          if (getHeaders() != null) {
-            options.headers.addAll(getHeaders());
-          }
-          options.extra.update("apiCallIdentifier", (value) => value,
-              ifAbsent: () => apiCallIdentifier);
-
-          if (!forceRefresh) {
-            options.extra.addAll(buildCacheOptions(Duration(hours: 1),
-                    forceRefresh: forceRefresh)
-                .extra);
-            options.extra
-                .update("cached", (value) => value, ifAbsent: () => true);
-          }
-          return options; //continue
-        }, onError: (DioError e) async {
+        ..add(_dioCacheManager.interceptor)
+        ..add(InterceptorsWrapper(onError: (DioError e) async {
           if (e.response != null) {
             print(e.response.data);
             print(e.response.headers);
@@ -89,9 +74,32 @@ class RESTService {
           response.extra
               .update("cached", (value) => false, ifAbsent: () => false);
         }));
+      request.options.headers['apiCallIdentifier'] = apiCallIdentifier;
+      request.options.extra.update("apiCallIdentifier", (value) => value,
+          ifAbsent: () => apiCallIdentifier);
+      if (getHeaders() != null) {
+        getHeaders().forEach((key, value) {
+          request.options.headers[key] = value;
+        });
+      }
+      if (!kIsWeb) {
+        if (forceRefresh) {
+          request.options.extra
+              .update("cached", (value) => value, ifAbsent: () => false);
+        } else {
+          request.options.extra.addAll(
+              buildCacheOptions(Duration(days: 1), forceRefresh: forceRefresh)
+                  .extra);
+          request.options.extra
+              .update("cached", (value) => value, ifAbsent: () => true);
+        }
+      } else {
+        request.options.extra
+            .update("cached", (value) => value, ifAbsent: () => false);
+      }
       request.interceptors.add(LogInterceptor(responseBody: false));
 
-      logParams(parameters);
+      print("REQUEST PARAMETERS:::\n ${jsonEncode(params)}");
 
       switch (verb) {
         case RESTService.GET:
@@ -106,27 +114,26 @@ class RESTService {
               host: uri.host,
               path: uri.path,
               queryParameters: attachUriWithQuery(parameters)));
-
           return parseResponse(response, apiCallIdentifier);
 
         case RESTService.POST:
           Future<Response> response = request.post(action, data: parameters);
           return parseResponse(response, apiCallIdentifier);
 
-        case RESTService.FORMDATA:
+        case RESTService.FORM_DATA:
           FormData formData = FormData.fromMap(parameters);
           Future<Response> response = request.post(action, data: formData);
           return parseResponse(response, apiCallIdentifier);
 
         case RESTService.PUT:
           Future<Response> response =
-              request.put(action, data: paramstoJson(parameters));
+              request.put(action, data: paramsToJson(parameters));
           return parseResponse(response, apiCallIdentifier);
           break;
 
         case RESTService.DELETE:
           Future<Response> response =
-              request.delete(action, data: paramstoJson(parameters));
+              request.delete(action, data: paramsToJson(parameters));
           return parseResponse(response, apiCallIdentifier);
           break;
 
@@ -143,7 +150,6 @@ class RESTService {
               host: uri.host,
               path: uri.path,
               queryParameters: attachUriWithQuery(parameters)));
-
           return parseResponse(response, apiCallIdentifier);
           break;
 
@@ -155,7 +161,6 @@ class RESTService {
               host: uri.host,
               path: uri.path,
               queryParameters: attachUriWithQuery(parameters)));
-
           return parseResponse(response, apiCallIdentifier);
           break;
 
@@ -176,31 +181,14 @@ class RESTService {
           );
       }
     } catch (error, stacktrace) {
-      print("Exception occured: $error stackTrace: $stacktrace");
-      // print(_handleError(error));
+      print("Exception occurred: $error stackTrace: $stacktrace");
       return parseErrorResponse(error, apiCallIdentifier);
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx and is also not 304.
-      /* print("Exception e::"+e.toString());
-      if(e is DioError) {
-        print("DioError e::"+e.toString());
-        if (e.response != null) {
-          print(e.response.data);
-          print(e.response.headers);
-          print(e.response.request);
-
-          return parseErrorResponse(e, apiCallIdentifier);
-        } else {
-          // Something happened in setting up or sending the request that triggered an Error
-          print(e.request);
-          print(e.message);
-          return parseErrorResponse(e, apiCallIdentifier);
-        }
-      }else{
-        print("e::"+e.toString());
-      }*/
-
     }
+  }
+
+  Future<bool> clearNetworkCache() {
+    if (_dioCacheManager != null) return _dioCacheManager.clearAll();
+    return Future.value(false);
   }
 
   BaseError _handleError(Exception error) {
@@ -242,11 +230,7 @@ class RESTService {
     return amerError;
   }
 
-  logParams(Map<String, dynamic> params) {
-    print("REQUEST PARAMETERS:::\n ${jsonEncode(params)}");
-  }
-
-  paramstoJson(Map<String, dynamic> params) {
+  paramsToJson(Map<String, dynamic> params) {
     return json.encode(params);
   }
 
@@ -281,10 +265,6 @@ class RESTService {
       Future<Response> response, apiCallIdentifier) async {
     print("REST RESPONSE:::\n ${jsonEncode(response)}");
     return await response;
-  }
-
-  dynamic paramsToJson(Map<String, dynamic> parameters) {
-    return json.encode(parameters);
   }
 
   Map<String, dynamic> attachUriWithQuery(Map<String, dynamic> parameters) {

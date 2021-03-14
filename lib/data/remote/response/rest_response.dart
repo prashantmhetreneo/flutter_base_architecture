@@ -23,9 +23,9 @@ abstract class RESTResponse<T> {
 
   int get apiIdentifier => _apiIdentifier;
 
-  // set apiIdentifier(int value) {
-  //   _apiIdentifier = value;
-  // }
+  set apiIdentifier(int value) {
+    _apiIdentifier = value;
+  }
 
   final Response response;
 

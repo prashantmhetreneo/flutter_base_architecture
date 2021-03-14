@@ -14,6 +14,8 @@ class SizingInformation {
 
   bool get isWatch => deviceScreenType == DeviceScreenType.Watch;
 
+  bool get isWeb => deviceScreenType == DeviceScreenType.Web;
+
   SizingInformation({
     this.deviceScreenType,
     this.screenSize,

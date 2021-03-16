@@ -263,7 +263,6 @@ class RESTService {
 
   Future<Response> parseResponse(
       Future<Response> response, apiCallIdentifier) async {
-    // print("REST RESPONSE:::\n ${jsonEncode(response)}");
     return await response;
   }
 

@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:convert';
 import 'dart:core';
 
 import 'package:dio/dio.dart';
@@ -19,12 +20,12 @@ abstract class RESTResponse<T> {
   List<BaseError> _errors = <BaseError>[];
   List<T> _data = <T>[];
   HashMap<String, dynamic> _dataFields = HashMap<String, dynamic>();
-  int _apiIdentifier = -1;
+  int _apiCallIdentifier = -1;
 
-  int get apiIdentifier => _apiIdentifier;
+  int get apiICallIdentifier => _apiCallIdentifier;
 
-  set apiIdentifier(int value) {
-    _apiIdentifier = value;
+  set apiICallIdentifier(int value) {
+    _apiCallIdentifier = value;
   }
 
   final Response response;
@@ -33,10 +34,9 @@ abstract class RESTResponse<T> {
     try {
       if (this.response?.data != null) {
         print(this.response.data.toString());
-        _apiIdentifier = response?.extra["apiCallIdentifier"];
-        print("_apiIdenfier" + _apiIdentifier?.toString());
+        _apiCallIdentifier = response?.extra["apiCallIdentifier"];
+        print("apiCallIdentifier" + _apiCallIdentifier?.toString());
         print("cached: " + response?.extra["cached"]?.toString());
-        print("RESTResponse:: Encrypted " + this.response.data.toString());
         parseEncryptedResponse(this.response.data);
       } else if (this.response.extra.containsKey("exception")) {
         print("Exception");
@@ -44,7 +44,7 @@ abstract class RESTResponse<T> {
             as BaseError; //Exception(this.response.statusMessage);
       }
     } catch (error) {
-      print("Response error>>>>>>>>>>" + error.toString());
+      print("REST RESPONSE ERRORS:::>>>>\n${jsonEncode(error)} ");
       getErrors().add(BaseError(
           error: error,
           message: error.toString(),
@@ -82,7 +82,6 @@ abstract class RESTResponse<T> {
 
   parseResponse(Map<String, dynamic> response) {
     Map<String, dynamic> responseObject = response;
-    print("RESTResponse:: Decrypted: " + response.toString());
     try {
       ResponseDto _responseDto =
           ResponseDto.map(responseObject, this.response.statusCode);
@@ -99,8 +98,8 @@ abstract class RESTResponse<T> {
             type: BaseErrorType.SERVER_MESSAGE));
         return;
       }
-      print("RESTResponse: " + _responseDto.data.toString());
-      parseResponseData(_responseDto.data, this._apiIdentifier);
+      print("REST RESPONSE:::>>> \n${jsonEncode(_responseDto.data)}");
+      parseResponseData(_responseDto.data, this._apiCallIdentifier);
     } catch (error) {
       getErrors().add(error);
       print("RESTResponse:: Error" + error.toString());

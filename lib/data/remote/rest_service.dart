@@ -99,7 +99,7 @@ class RESTService {
       }
       request.interceptors.add(LogInterceptor(responseBody: false));
 
-      print("REQUEST PARAMETERS:::\n ${jsonEncode(params)}");
+      print("REQUEST PARAMETERS:::\n ${jsonEncode(parameters)}");
 
       switch (verb) {
         case RESTService.GET:
@@ -263,7 +263,7 @@ class RESTService {
 
   Future<Response> parseResponse(
       Future<Response> response, apiCallIdentifier) async {
-    print("REST RESPONSE:::\n ${jsonEncode(response)}");
+    // print("REST RESPONSE:::\n ${jsonEncode(response)}");
     return await response;
   }
 

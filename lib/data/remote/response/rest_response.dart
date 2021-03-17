@@ -43,7 +43,7 @@ abstract class RESTResponse<T> {
             as BaseError; //Exception(this.response.statusMessage);
       }
     } catch (error) {
-      print("Response error>>>>>>>>>>" + error.toString());
+      print("REST RESPONSE ERRORS:::>>>> ${error.toString()} ");
       getErrors().add(BaseError(
           error: error,
           message: error.toString(),
@@ -97,11 +97,11 @@ abstract class RESTResponse<T> {
             type: BaseErrorType.SERVER_MESSAGE));
         return;
       }
-      print("RESTResponse: " + _responseDto.data.toString());
+      print("REST RESPONSE:::>>> ${_responseDto.data.toString()}");
       parseResponseData(_responseDto.data, this._apiCallIdentifier);
     } catch (error) {
       getErrors().add(error);
-      print("RESTResponse:: Error" + error.toString());
+      print("RESTResponse ERROR:::>>> ${error.toString()}");
     }
   }
 

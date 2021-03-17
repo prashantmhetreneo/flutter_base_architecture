@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:convert';
 import 'dart:core';
 
 import 'package:dio/dio.dart';
@@ -44,7 +43,7 @@ abstract class RESTResponse<T> {
             as BaseError; //Exception(this.response.statusMessage);
       }
     } catch (error) {
-      print("REST RESPONSE ERRORS:::>>>>\n${jsonEncode(error)} ");
+      print("Response error>>>>>>>>>>" + error.toString());
       getErrors().add(BaseError(
           error: error,
           message: error.toString(),
@@ -98,7 +97,7 @@ abstract class RESTResponse<T> {
             type: BaseErrorType.SERVER_MESSAGE));
         return;
       }
-      print("REST RESPONSE:::>>> \n${jsonEncode(_responseDto.data)}");
+      print("RESTResponse: " + _responseDto.data.toString());
       parseResponseData(_responseDto.data, this._apiCallIdentifier);
     } catch (error) {
       getErrors().add(error);

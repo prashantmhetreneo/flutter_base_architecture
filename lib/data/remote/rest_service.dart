@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_base_architecture/exception/base_error.dart';
 
@@ -23,7 +22,7 @@ class RESTService {
   static const String EXTRA_HTTP_VERB = "EXTRA_HTTP_VERB";
   static const String REST_API_CALL_IDENTIFIER = "REST_API_CALL_IDENTIFIER";
   static const String EXTRA_PARAMS = "EXTRA_PARAMS";
-  DioCacheManager _dioCacheManager;
+  // DioCacheManager _dioCacheManager;
 
   Future<Response> onHandleIntent(Map<String, dynamic> params) async {
     dynamic action = params.putIfAbsent(DATA, () {});
@@ -50,30 +49,33 @@ class RESTService {
 
     try {
       Dio request = Dio();
-      _dioCacheManager ??= DioCacheManager(CacheConfig(baseUrl: apiUrl));
+      //  _dioCacheManager ??= DioCacheManager(CacheConfig(baseUrl: apiUrl));
       request.interceptors
-        ..add(_dioCacheManager.interceptor)
-        ..add(InterceptorsWrapper(onError: (DioError e) async {
-          if (e.response != null) {
-            print(e.response.data);
-            print(e.response.headers);
-            print(e.response.request);
+        //..add(_dioCacheManager.interceptor)
+        ..add(InterceptorsWrapper(
+            onError: (DioError e, handler) async {
+              if (e.response != null) {
+                print(e.response.data);
+                print(e.response.headers);
+                //  print(e.response.request);
 
-            return parseErrorResponse(e, apiCallIdentifier);
-          } else {
-            // Something happened in setting up or sending the request that triggered an Error
-            print(e.request);
-            print(e.message);
-            return parseErrorResponse(e, apiCallIdentifier);
-          }
-        }, onResponse: (response) {
-          response.headers
-              .add("apiCallIdentifier", apiCallIdentifier.toString());
-          response.extra.update("apiCallIdentifier", (value) => value,
-              ifAbsent: () => apiCallIdentifier);
-          response.extra
-              .update("cached", (value) => false, ifAbsent: () => false);
-        }));
+                return parseErrorResponse(e, apiCallIdentifier);
+              } else {
+                // Something happened in setting up or sending the request that triggered an Error
+                //  print(e.request);
+                print(e.message);
+                return parseErrorResponse(e, apiCallIdentifier);
+              }
+            },
+            onRequest: (options, handler) {},
+            onResponse: (response, handler) {
+              response.headers
+                  .add("apiCallIdentifier", apiCallIdentifier.toString());
+              response.extra.update("apiCallIdentifier", (value) => value,
+                  ifAbsent: () => apiCallIdentifier);
+              response.extra
+                  .update("cached", (value) => false, ifAbsent: () => false);
+            }));
       request.options.headers['apiCallIdentifier'] = apiCallIdentifier;
       request.options.extra.update("apiCallIdentifier", (value) => value,
           ifAbsent: () => apiCallIdentifier);
@@ -87,9 +89,9 @@ class RESTService {
           request.options.extra
               .update("cached", (value) => value, ifAbsent: () => false);
         } else {
-          request.options.extra.addAll(
-              buildCacheOptions(Duration(days: 1), forceRefresh: forceRefresh)
-                  .extra);
+          // request.options.extra.addAll(
+          //     buildCacheOptions(Duration(days: 1), forceRefresh: forceRefresh)
+          //         .extra);
           request.options.extra
               .update("cached", (value) => value, ifAbsent: () => true);
         }
@@ -99,7 +101,7 @@ class RESTService {
       }
       request.interceptors.add(LogInterceptor(responseBody: false));
 
-      print("REQUEST PARAMETERS:::\n ${jsonEncode(parameters)}");
+      print("REQUEST PARAMETERS::: ${jsonEncode(parameters)}");
 
       switch (verb) {
         case RESTService.GET:
@@ -187,7 +189,7 @@ class RESTService {
   }
 
   Future<bool> clearNetworkCache() {
-    if (_dioCacheManager != null) return _dioCacheManager.clearAll();
+    // if (_dioCacheManager != null) return _dioCacheManager.clearAll();
     return Future.value(false);
   }
 
@@ -196,29 +198,29 @@ class RESTService {
 
     if (error is DioError) {
       switch (error.type) {
-        case DioErrorType.CANCEL:
+        case DioErrorType.cancel:
           amerError.type = BaseErrorType.DEFAULT;
           amerError.message = "Request to API server was cancelled";
           break;
-        case DioErrorType.CONNECT_TIMEOUT:
+        case DioErrorType.connectTimeout:
           amerError.type = BaseErrorType.SERVER_TIMEOUT;
           amerError.message = "Connection timeout with API server";
           break;
-        case DioErrorType.DEFAULT:
+        case DioErrorType.other:
           amerError.type = BaseErrorType.DEFAULT;
           amerError.message =
               "Connection to API server failed due to internet connection";
           break;
-        case DioErrorType.RECEIVE_TIMEOUT:
+        case DioErrorType.receiveTimeout:
           amerError.type = BaseErrorType.SERVER_TIMEOUT;
           amerError.message = "Receive timeout in connection with API server";
           break;
-        case DioErrorType.RESPONSE:
+        case DioErrorType.response:
           amerError.type = BaseErrorType.INVALID_RESPONSE;
           amerError.message =
               "Received invalid status code: ${error.response.statusCode}";
           break;
-        case DioErrorType.SEND_TIMEOUT:
+        case DioErrorType.sendTimeout:
           amerError.type = BaseErrorType.SERVER_TIMEOUT;
           amerError.message = "Receive timeout exception";
           break;

@@ -11,7 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^5.0.0
- # dio_http_cache: ^0.2.11
+  dio: ^4.0.0
+#  dio_http_cache: ^0.2.11
   dio_cache_interceptor: ^2.3.1
   rxdart: ^0.27.0
   connectivity: ^3.0.4
@@ -23,9 +24,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-dependency_overrides:
-
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

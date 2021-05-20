@@ -49,33 +49,34 @@ class RESTService {
 
     try {
       Dio request = Dio();
-      //  _dioCacheManager ??= DioCacheManager(CacheConfig(baseUrl: apiUrl));
-      request.interceptors
-        //..add(_dioCacheManager.interceptor)
-        ..add(InterceptorsWrapper(
-            onError: (DioError e, handler) async {
-              if (e.response != null) {
-                print(e.response.data);
-                print(e.response.headers);
-                //  print(e.response.request);
+      // _dioCacheManager ??= DioCacheManager(CacheConfig(baseUrl: apiUrl));
+      // ..add(_dioCacheManager.interceptor)
 
-                return parseErrorResponse(e, apiCallIdentifier);
-              } else {
-                // Something happened in setting up or sending the request that triggered an Error
-                //  print(e.request);
-                print(e.message);
-                return parseErrorResponse(e, apiCallIdentifier);
-              }
-            },
-            onRequest: (options, handler) {},
-            onResponse: (response, handler) {
-              response.headers
-                  .add("apiCallIdentifier", apiCallIdentifier.toString());
-              response.extra.update("apiCallIdentifier", (value) => value,
-                  ifAbsent: () => apiCallIdentifier);
-              response.extra
-                  .update("cached", (value) => false, ifAbsent: () => false);
-            }));
+      request.interceptors
+          .add(InterceptorsWrapper(onError: (DioError e, handler) async {
+        if (e.response != null) {
+          print(e.response.data);
+          print(e.response.headers);
+          //  print(e.response.request);
+
+          return parseErrorResponse(e, apiCallIdentifier);
+        } else {
+          // Something happened in setting up or sending the request that triggered an Error
+          //  print(e.request);
+          print(e.message);
+          return parseErrorResponse(e, apiCallIdentifier);
+        }
+      }, onRequest: (options, handler) {
+        options.baseUrl = apiUrl;
+        return handler.next(options);
+      }, onResponse: (response, handler) {
+        response.headers.add("apiCallIdentifier", apiCallIdentifier.toString());
+        response.extra.update("apiCallIdentifier", (value) => value,
+            ifAbsent: () => apiCallIdentifier);
+        response.extra
+            .update("cached", (value) => false, ifAbsent: () => false);
+        return handler.next(response);
+      }));
       request.options.headers['apiCallIdentifier'] = apiCallIdentifier;
       request.options.extra.update("apiCallIdentifier", (value) => value,
           ifAbsent: () => apiCallIdentifier);
@@ -179,7 +180,8 @@ class RESTService {
 
         default:
           throw DioError(
-            response: Response(headers: Headers()),
+            response: Response(headers: Headers(), requestOptions: null),
+            requestOptions: null,
           );
       }
     } catch (error, stacktrace) {
@@ -245,10 +247,10 @@ class RESTService {
         if (exception.response != null) {
           response = exception.response;
         } else {
-          response = Response(headers: Headers());
+          response = Response(headers: Headers(), requestOptions: null);
         }
       } else {
-        response = Response(headers: Headers());
+        response = Response(headers: Headers(), requestOptions: null);
       }
       //response.data = null;
       response.headers.set("apiCallIdentifier", apiCallIdentifier.toString());

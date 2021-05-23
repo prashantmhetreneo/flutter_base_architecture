@@ -102,7 +102,7 @@ class RESTService {
       }
       request.interceptors.add(LogInterceptor(responseBody: false));
 
-      print("REQUEST PARAMETERS::: ${jsonEncode(parameters)}");
+      print("REQUEST PARAMETERS::: ${parameters.toString()}");
 
       switch (verb) {
         case RESTService.GET:
